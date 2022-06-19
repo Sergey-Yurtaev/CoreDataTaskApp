@@ -10,12 +10,18 @@ import UIKit
 class TaskListViewController: UITableViewController {
     
     private let cellID = "cell"
-    private var tasks = StorageManager.shared.fetchData()
+    lazy var tasks = StorageManager.shared.fetchData()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellID)
         setupView()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tasks = StorageManager.shared.fetchData()
+        tableView.reloadData()
     }
     
     private func setupView() {
@@ -58,12 +64,19 @@ class TaskListViewController: UITableViewController {
     }
     
     @objc private func addNewTask() {
-        showAlert()
-//        let newTaskVC = NewTaskViewController()
-//        newTaskVC.modalPresentationStyle = .fullScreen
-//        present(newTaskVC, animated: true)
+        
+//        showAlert()
+        let newTaskVC = NewTaskViewController()
+        newTaskVC.modalPresentationStyle = .fullScreen
+        present(newTaskVC, animated: true)
+    }
+    
+    deinit {
+        print("TaskListViewController has been dealocated") //  класс не выгружается. нужно устранить утечку памяти
     }
 }
+
+
 
 // MARK: - UITableViewDataSourse
 extension TaskListViewController {
@@ -107,7 +120,6 @@ extension TaskListViewController {
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         let moveRates = tasks.remove(at: sourceIndexPath.row)
         tasks.insert(moveRates, at: destinationIndexPath.row)
-        // нужно доработать
     }
 }
 
@@ -124,7 +136,7 @@ extension TaskListViewController {
         alert.action(task: task) { newValue in
             if let task = task, let completion = completion {
                 StorageManager.shared.edit(task, newName: newValue)
-                completion() 
+                completion()
             } else {
                 StorageManager.shared.save(newValue) { task in
                     self.tasks.append(task)

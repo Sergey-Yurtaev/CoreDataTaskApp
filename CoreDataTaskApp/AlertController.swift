@@ -11,7 +11,7 @@ class AlertController: UIAlertController {
         
     func action(task: Task?, completion: @escaping (String) -> Void) {
         
-        let saveAction = UIAlertAction(title: "Save", style: .default) { _ in
+        let saveAction = UIAlertAction(title: "Save", style: .default) { [unowned self] _ in
             guard let newValue = self.textFields?.first?.text else { return }
             guard !newValue.isEmpty else { return }
             completion(newValue)
@@ -25,5 +25,9 @@ class AlertController: UIAlertController {
             textField.placeholder = "Task"
             textField.text = task?.name
         }
+    }
+    
+    deinit {
+        print("AlertController has been dealocated")
     }
 }

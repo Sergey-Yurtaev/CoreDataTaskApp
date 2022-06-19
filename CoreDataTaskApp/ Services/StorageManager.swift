@@ -29,6 +29,10 @@ class StorageManager {
     
     private init() {}
     
+    deinit {
+        print("StorageManager has been dealocated")
+    }
+    
     // MARK: - Public Methods
     func fetchData() -> [Task] {
         let fetchRequest: NSFetchRequest<Task> = Task.fetchRequest()
@@ -42,7 +46,7 @@ class StorageManager {
     }
     
     func save(_ taskName: String, completion: (Task) -> Void) {
-        guard let entityDescription = NSEntityDescription.entity(forEntityName: "Task", in: persistentContainer.viewContext) else { return }
+        guard let entityDescription = NSEntityDescription.entity(forEntityName: "Task", in: viewContext) else { return }
         guard let task = NSManagedObject(entity: entityDescription, insertInto: viewContext) as? Task else { return }
         task.name = taskName
         

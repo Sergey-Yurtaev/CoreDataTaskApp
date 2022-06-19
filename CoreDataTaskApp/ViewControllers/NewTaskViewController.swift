@@ -16,6 +16,7 @@ class NewTaskViewController: UIViewController {
         textField.borderStyle = .roundedRect
         return textField
     }()
+
     
     private lazy var saveButton: UIButton = {
         let button = UIButton()
@@ -85,10 +86,17 @@ class NewTaskViewController: UIViewController {
     }
     
     @objc private func saveTask() {
+        guard let task = taskTextField.text else  { return }
+        StorageManager.shared.save(task) { _ in }
+        
         dismiss(animated: true)
     }
     
     @objc private func cancel() {
         dismiss(animated: true)
+    }
+    
+    deinit {
+        print("NewTaskViewController has been dealocated")
     }
 }
